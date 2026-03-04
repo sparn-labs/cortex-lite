@@ -1,0 +1,59 @@
+{
+  "name": "@sparn/cortex-lite",
+  "version": "1.0.0",
+  "description": "Lightweight context optimization engine with Rust-powered compute",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./hooks/*": {
+      "import": "./dist/hooks/*.mjs",
+      "require": "./dist/hooks/*.js"
+    },
+    "./daemon": {
+      "import": "./dist/daemon/index.mjs",
+      "require": "./dist/daemon/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "crates/cortex-engine/cortex-engine.linux-x64-gnu.node"
+  ],
+  "scripts": {
+    "build": "npm run build:native && npm run build:ts",
+    "build:native": "bash scripts/build-native.sh",
+    "build:ts": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check src/",
+    "lint:fix": "biome check --write src/",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "context",
+    "optimization",
+    "compression",
+    "claude"
+  ],
+  "author": "sparn",
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "registry": "https://repository.sparn.dev"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@napi-rs/cli": "^2.18.0",
+    "@types/node": "^25.3.3",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

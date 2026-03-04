@@ -1,0 +1,12 @@
+{
+  "name": "cortex-engine",
+  "version": "1.0.0",
+  "private": true,
+  "napi": {
+    "name": "cortex-engine",
+    "triples": {
+      "defaults": false,
+      "additional": ["x86_64-unknown-linux-gnu"]
+    }
+  }
+}

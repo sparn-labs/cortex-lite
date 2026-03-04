@@ -1,0 +1,10 @@
+node_modules/
+dist/
+target/
+*.node
+*.tsbuildinfo
+.DS_Store
+crates/cortex-engine/index.js
+crates/cortex-engine/index.d.ts
+crates/cortex-engine/Cargo.lock
+.cortex/
