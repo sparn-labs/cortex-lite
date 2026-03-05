@@ -1,19 +1,20 @@
 # Cortex Lite
 
-Lightweight context optimization for Claude Code, powered by a native Rust engine. Same compression pipeline as [@sparn/cortex](https://github.com/sparn-labs/cortex), minus the CLI and analysis tools, plus 10-40x faster compute.
+Lightweight context optimization for Claude Code, powered by a native Rust engine. Pure context compression — no CLI, no persistence, just fast hooks and a programmatic API.
 
 ## Why Lite?
 
-Full cortex gives you code analysis, dependency graphs, tech debt tracking, security/compliance scanning, and 35+ CLI commands. If you just want **fast context compression** with zero setup overhead, this is it.
+| | cortex | cortex-lite | cortex-developer-edition |
+|---|--------|-------------|--------------------------|
+| Purpose | Code scanning (quality, security, compliance) | **Context compression** | Context optimization + code analysis |
+| Token counting | JS | **Rust (tiktoken-rs)** | JS (gpt-tokenizer) |
+| Runtime deps | 6 | **1 (zod)** | 14 |
+| Persistence | None | In-memory | SQLite |
+| CLI | 8 commands | None | 21 commands |
+| Hooks | None | **Built-in** | Built-in |
+| Daemon | None | **Built-in** | Built-in |
 
-| | cortex | cortex-lite |
-|---|--------|-------------|
-| Token compression | JS (gpt-tokenizer) | **Rust (tiktoken-rs)** |
-| Bundle size | ~1MB | **~100KB** |
-| Runtime deps | 10+ | **1 (zod)** |
-| Persistence | SQLite | In-memory |
-| CLI | 35+ commands | None |
-| Analysis | Architecture, quality, security, compliance | None |
+If you just want **fast context compression** for Claude Code with zero overhead, this is it.
 
 ## Install
 
@@ -80,7 +81,7 @@ consolidate → hash dedup + cosine similarity ≥ 0.85
 
 Each memory entry gets a score combining:
 
-- **Time decay**: `score × (1 - exp(-age / ttl))` — exponential fade over TTL (default 24h)
+- **Time decay**: exponential fade over TTL (default 24h)
 - **Access bonus**: `log(access_count + 1) × 0.1` — frequently referenced entries stay relevant
 - **BTSP protection**: Errors/stack traces always score ≥ 0.9 — never pruned accidentally
 - **Recency boost**: Entries < 30 min old get up to 1.3x multiplier
@@ -161,10 +162,19 @@ createPipeline({
 });
 ```
 
+## See Also
+
+| Package | What it does |
+|---|---|
+| [`@sparn/cortex`](https://github.com/sparn-labs/cortex) | Simple code scanning CLI — quality, security, and compliance checks with zero setup |
+| [`@sparn/cortex-developer-edition`](https://github.com/sparn-labs/cortex-developer-edition) | Full context optimization + code analysis for AI coding agents (21 CLI commands, MCP server, dependency graphs, search) |
+
 ## Development
 
 ```bash
 # Prerequisites: Rust toolchain (cargo, napi-rs)
+git clone https://github.com/sparn-labs/cortex-lite.git
+cd cortex-lite
 npm install
 npm run build:native    # Compile Rust → .node addon
 npm run build:ts        # Compile TypeScript → dist/
@@ -175,4 +185,4 @@ npm run lint
 
 ## License
 
-UNLICENSED
+MIT
