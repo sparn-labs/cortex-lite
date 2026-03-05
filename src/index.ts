@@ -14,10 +14,18 @@ export type {
 	ConfidenceState,
 	BlockType,
 	StateDistribution,
+	CostStats,
 } from "./types.js";
 
 // Config
-export { CortexLiteConfigSchema, DEFAULT_CONFIG, type CortexLiteConfig } from "./config.js";
+export {
+	CortexLiteConfigSchema,
+	DEFAULT_CONFIG,
+	MODEL_PRICING,
+	MODEL_ALIASES,
+	type CortexLiteConfig,
+	type ModelPricing,
+} from "./config.js";
 
 // Pipeline
 export { createPipeline, type Pipeline, type PipelineStats } from "./pipeline.js";

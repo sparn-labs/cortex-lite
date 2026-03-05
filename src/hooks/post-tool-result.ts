@@ -15,6 +15,8 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { MODEL_ALIASES, MODEL_PRICING } from "../config.js";
+import type { CostStats } from "../types.js";
 
 const DEBUG = process.env["CORTEX_DEBUG"] === "true";
 const LOG_FILE =
@@ -45,6 +47,19 @@ interface SessionStats {
 	totalTokensAfter: number;
 	lastUpdated: number;
 	perTool?: Record<string, PerToolStats>;
+	cost?: CostStats;
+}
+
+function detectModel(): string {
+	return (
+		process.env["CORTEX_MODEL"] ||
+		process.env["CLAUDE_MODEL"] ||
+		"claude-sonnet-4-6"
+	);
+}
+
+function resolveModel(input: string): string {
+	return MODEL_ALIASES[input.toLowerCase()] || input;
 }
 
 /** Estimate tokens (fast heuristic — no native dependency in hooks) */
@@ -566,6 +581,29 @@ async function main(): Promise<void> {
 			stats.perTool[toolName].compressed += 1;
 			stats.perTool[toolName].tokensBefore += tokens;
 			stats.perTool[toolName].tokensAfter += summaryTokens;
+
+			// --- Cost tracking ---
+			const model = resolveModel(detectModel());
+			const pricing = MODEL_PRICING[model];
+			if (!stats.cost) {
+				stats.cost = {
+					model,
+					inputTokens: 0,
+					outputTokens: 0,
+					inputCost: 0,
+					outputCost: 0,
+					totalCost: 0,
+				};
+			}
+			stats.cost.model = model;
+			// Compressed output = input tokens Claude reads
+			stats.cost.inputTokens += summaryTokens;
+			if (pricing) {
+				stats.cost.inputCost +=
+					(summaryTokens / 1_000_000) * pricing.inputPerMillion;
+				stats.cost.totalCost =
+					stats.cost.inputCost + stats.cost.outputCost;
+			}
 
 			saveSessionStats(stats);
 

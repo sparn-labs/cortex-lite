@@ -62,3 +62,12 @@ export interface StateDistribution {
 	silent: number;
 	total: number;
 }
+
+export interface CostStats {
+	model: string; // Resolved model ID
+	inputTokens: number; // Total input tokens this session
+	outputTokens: number; // Total output tokens this session
+	inputCost: number; // $ accumulated input cost
+	outputCost: number; // $ accumulated output cost
+	totalCost: number; // $ inputCost + outputCost
+}

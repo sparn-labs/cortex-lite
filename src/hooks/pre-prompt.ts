@@ -186,7 +186,28 @@ async function main(): Promise<void> {
 						}
 					}
 
-					statusLine = `[cortex] Session: ${transcriptSize} | ${sessionData.outputsCompressed} compressed (${avgReduction}% avg) | ~${savedStr} saved${toolBreakdown}`;
+					let costDisplay = "";
+					if (
+						sessionData.cost &&
+						typeof sessionData.cost === "object"
+					) {
+						const cost = sessionData.cost as {
+							model: string;
+							totalCost: number;
+						};
+						const shortName = cost.model
+							.replace(/^claude-/, "")
+							.replace(/^(opus|sonnet|haiku).*/, "$1")
+							.replace(/^gpt-/, "gpt")
+							.replace(/^gemini-\d+\.\d+-/, "gemini-");
+						const pricing =
+							cost.totalCost >= 0
+								? `$${cost.totalCost.toFixed(2)}`
+								: "$?.??";
+						costDisplay = ` | ${pricing} (${shortName})`;
+					}
+
+					statusLine = `[cortex] Session: ${transcriptSize} | ${sessionData.outputsCompressed} compressed (${avgReduction}% avg) | ~${savedStr} saved${costDisplay}${toolBreakdown}`;
 				}
 			}
 		} catch {
